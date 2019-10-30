@@ -1,4 +1,5 @@
 <?php
+
 function format_price($price) {
     $formattedPrice = ceil($price);
     if ($formattedPrice >= 1000) {
@@ -27,13 +28,22 @@ function esc($str) {
     return $text;
 }
 
-function selectData($sql, $link) {
-
+function findAll($sql, $link) {
     $result = mysqli_query($link, $sql);
-    if ($result) {
-        return mysqli_fetch_all($result, MYSQLI_ASSOC);
-    } else {
-        return null;
+    return ($result) ? mysqli_fetch_all($result, MYSQLI_ASSOC) : null;
+}
+
+function findOne($sql, $link) {
+    $result = mysqli_query($link, $sql);
+    return ($result) ? mysqli_fetch_all($result, MYSQLI_ASSOC)[0] : null;
+}
+
+function getCategories($link) {
+    $sqlCategories = 'SELECT `char_code`, `name` FROM categories';
+    $categories = findAll($sqlCategories, $link);
+    if ($categories === null) {
+        die(mysqli_error($link));
     }
+    return $categories;
 }
 
