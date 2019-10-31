@@ -13,16 +13,12 @@ $sqlLot = sprintf($sqlLot, $lotId);
 $lot = findOne($sqlLot, $link);
 
 if ($lot === null) {
-    die(mysqli_error($link));
+    http_response_code(404);
+    $page_content = include_template('error.php', ['error' => 'Даннай лот не найден']);
 } else {
-    if (!mysqli_num_rows(mysqli_query($link, $sqlLot))) {
-        http_response_code(404);
-        $page_content = include_template('error.php', ['error' => 'Даннай лот не найден']);
-    } else {
-        $page_content = include_template('lot.php', ['categories' => $categories,
-            'lot' => $lot,
-            'expiryTime' => get_dt_range($lot['expiry_date'])]);
-    }
+    $page_content = include_template('lot.php', ['categories' => $categories,
+        'lot' => $lot,
+        'expiryTime' => get_dt_range($lot['expiry_date'])]);
 }
 
 
