@@ -1,12 +1,10 @@
 <?php
 require_once('init.php');
 require_once('helpers.php');
-require_once('functions.php');
 require_once('data.php');
 
 $categories = getCategories($link);
 
-// Запрос на получение списка лотов
 $sqlLots = <<<SQL
 SELECT lots.id, lots.name, lots.first_price, lots.img, lots.expiry_date, categories.name as category,
    CASE
@@ -16,12 +14,14 @@ SELECT lots.id, lots.name, lots.first_price, lots.img, lots.expiry_date, categor
    FROM lots JOIN categories ON lots.category_id = categories.id
    WHERE lots.expiry_date > CURDATE() ORDER BY lots.expiry_date DESC;
 SQL;
-$lots = findAll($sqlLots, $link);
 
-if ($lots === null) {
-    $page_content = include_template('error.php', ['error' => mysqli_error($link)]);
-} else {
+$result = mysqli_query($link, $sqlLots);
+
+if ($result) {
+    $lots = mysqli_fetch_all($result, MYSQLI_ASSOC);
     $page_content = include_template('main.php', ['categories' => $categories, 'lots' => $lots]);
+} else {
+    $page_content = include_template('error.php', ['error' => mysqli_error($link)]);
 }
 
 $layout_content = include_template('layout.php', [
