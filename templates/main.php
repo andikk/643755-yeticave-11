@@ -4,7 +4,7 @@
     <ul class="promo__list">
         <?php foreach ($categories as $category): ?>
             <li class="promo__item promo__item--boards">
-                <a class="promo__link" href="pages/all-lots.html"><?= $category ?></a>
+                <a class="promo__link" href="pages/all-lots.html"><?= esc($category) ?></a>
             </li>
         <?php endforeach; ?>
     </ul>
@@ -15,7 +15,8 @@
     </div>
     <ul class="lots__list">
         <?php foreach ($lots as $lot): ?>
-            <?=include_template('_lot.php', ['lot' => $lot]); ?>
+            <?php $showTimeBlock = get_dt_range($lot['expiry_date'])?>
+            <?=include_template('_lot.php', ['lot' => $lot, 'showTimeBlock' => $showTimeBlock]); ?>
         <?php endforeach; ?>
     </ul>
 </section>

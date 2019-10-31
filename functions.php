@@ -16,8 +16,14 @@ function get_dt_range($expiry_date)
     $days_count = date_interval_format($dt_diff, "%a");
     if ($days_count == 0 && $dt_end > $dt_now) {
         $hours_count = date_interval_format($dt_diff, "%H %I");
-        $res = explode(' ', $hours_count);
-        return $res;
+        return explode(' ', $hours_count);
+    } else {
+        return null;
     }
+}
+
+function esc($str) {
+    $text = htmlspecialchars($str);
+    return $text;
 }
 
