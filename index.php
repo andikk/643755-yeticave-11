@@ -18,10 +18,10 @@ SELECT lots.id, lots.name, lots.first_price, lots.img, lots.expiry_date, categor
 SQL;
 $lots = findAll($sqlLots, $link);
 
-$page_content = include_template('main.php', ['categories' => $categories, 'lots' => $lots]);
-
 if ($lots === null) {
     $page_content = include_template('error.php', ['error' => mysqli_error($link)]);
+} else {
+    $page_content = include_template('main.php', ['categories' => $categories, 'lots' => $lots]);
 }
 
 $layout_content = include_template('layout.php', [
