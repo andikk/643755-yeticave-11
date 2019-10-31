@@ -10,9 +10,9 @@
                 <span class="lot__amount">Стартовая цена</span>
                 <span class="lot__cost"><?= format_price(esc($lot['price'])) ?></span>
             </div>
-            <?php if ($showTimeBlock) :?>
-                <div class="lot__timer timer <?= (int) get_dt_range($lot['expiry_date'])[0] === 0 ? 'timer--finishing' : ''?>">
-                    <?= implode(':', get_dt_range(esc($lot['expiry_date']))) ?>
+            <?php if ($expiryTime) :?>
+                <div class="lot__timer timer <?= $hour === 0 ? 'timer--finishing' : ''?>">
+                    <?= implode(':', $expiryTime) ?>
                 </div>
             <?php endif ?>
 
