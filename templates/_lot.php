@@ -11,7 +11,7 @@
                 <span class="lot__cost"><?= format_price(esc($lot['price'])) ?></span>
             </div>
             <?php if ($expiryTime) :?>
-                <div class="lot__timer timer <?= $hour === 0 ? 'timer--finishing' : ''?>">
+                <div class="lot__timer timer <?= (int) $expiryTime[0] === 0 ? 'timer--finishing' : ''?>">
                     <?= implode(':', $expiryTime) ?>
                 </div>
             <?php endif ?>

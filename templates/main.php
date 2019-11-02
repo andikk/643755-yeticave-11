@@ -16,8 +16,7 @@
     <ul class="lots__list">
         <?php foreach ($lots as $lot): ?>
             <?=include_template('_lot.php', ['lot' => $lot,
-                                                    'expiryTime' => get_dt_range($lot['expiry_date']),
-                                                    'hour' => (int) get_dt_range($lot['expiry_date'])[0]])?>
+                                                    'expiryTime' => get_dt_range($lot['expiry_date'])])?>
         <?php endforeach; ?>
     </ul>
 </section>
