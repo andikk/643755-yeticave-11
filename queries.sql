@@ -83,8 +83,6 @@ SELECT lots.name, lots.first_price, lots.img, categories.name FROM lots JOIN cat
 -- показать лот по его id. Получите также название категории, к которой принадлежит лот;
 SELECT lots.name, categories.name FROM lots JOIN categories ON lots.category_id = categories.id WHERE lots.id = 1
 
---SELECT day, cities.name, temperature, cloud FROM weather_log JOIN cities ON weather_log.city_id = cities.id
-
 -- обновить название лота по его идентификатору;
 UPDATE lots SET name = 'Новое название лота' WHERE id = 1;
 
