@@ -78,10 +78,11 @@ SELECT * FROM categories;
 
 -- получить самые новые, открытые лоты.
 -- Каждый лот должен включать название, стартовую цену, ссылку на изображение, цену, название категории;
-SELECT lots.name, lots.first_price, lots.img, categories.name FROM lots JOIN categories ON lots.category_id = categories.id WHERE lots.expiry_date > CURDATE() ORDER BY lots.expiry_date DESC;
-
 SELECT lots.name, lots.first_price, lots.img, categories.name,
-       (SELECT MAX(price) FROM bets WHERE bets.lot_id = lots.id) AS price
+       CASE
+            WHEN (SELECT MAX(price) FROM bets WHERE bets.lot_id = lots.id) > 0 THEN (SELECT MAX(price) FROM bets WHERE bets.lot_id = lots.id)
+            ELSE lots.first_price
+       END AS price
        FROM lots JOIN categories ON lots.category_id = categories.id
        WHERE lots.expiry_date > CURDATE() ORDER BY lots.expiry_date DESC;
 
