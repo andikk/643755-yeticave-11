@@ -80,6 +80,11 @@ SELECT * FROM categories;
 -- Каждый лот должен включать название, стартовую цену, ссылку на изображение, цену, название категории;
 SELECT lots.name, lots.first_price, lots.img, categories.name FROM lots JOIN categories ON lots.category_id = categories.id WHERE lots.expiry_date > CURDATE() ORDER BY lots.expiry_date DESC;
 
+SELECT lots.name, lots.first_price, lots.img, categories.name,
+       (SELECT MAX(price) FROM bets WHERE bets.lot_id = lots.id) AS price
+       FROM lots JOIN categories ON lots.category_id = categories.id
+       WHERE lots.expiry_date > CURDATE() ORDER BY lots.expiry_date DESC;
+
 -- показать лот по его id. Получите также название категории, к которой принадлежит лот;
 SELECT lots.name, categories.name FROM lots JOIN categories ON lots.category_id = categories.id WHERE lots.id = 1
 
