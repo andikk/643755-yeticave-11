@@ -8,8 +8,6 @@ CREATE TABLE categories (
   char_code VARCHAR(255) NOT NULL UNIQUE
 );
 
-CREATE INDEX name_categories ON categories(name);
-
 CREATE TABLE users (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   dt_add DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -19,7 +17,6 @@ CREATE TABLE users (
   contacts TEXT NOT NULL
 );
 
-CREATE INDEX id_users ON users(id);
 
 CREATE TABLE lots (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -35,7 +32,6 @@ CREATE TABLE lots (
   step INT UNSIGNED NOT NULL
 );
 
-CREATE INDEX user_id_lots ON lots(user_id);
 CREATE INDEX category_id_lots ON lots(category_id);
 CREATE INDEX winner_id_lots ON lots(winner_id);
 
