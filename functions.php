@@ -27,3 +27,13 @@ function esc($str) {
     return $text;
 }
 
+function selectData($sql, $link) {
+
+    $result = mysqli_query($link, $sql);
+    if ($result) {
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    } else {
+        return null;
+    }
+}
+
