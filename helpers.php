@@ -143,4 +143,112 @@ function include_template($name, array $data = []) {
     return $result;
 }
 
+/**
+ * Форматирует цену
+ *
+ * @param string $price цена
+ *
+ * @return string отформатированная цена
+ */
+function format_price($price) {
+    $formattedPrice = ceil($price);
+    if ($formattedPrice >= 1000) {
+        $formattedPrice = number_format($formattedPrice, 0, '', ' ');
+    }
+
+    return $formattedPrice . ' ₽';
+}
+
+/**
+ * Возаращает время истечения лота
+ *
+ * @param string expiry_date дата истечения лота
+ *
+ * @return array дата и время истечения лота
+ */
+function get_dt_range($expiry_date) {
+    $dt_now = date_create("now");
+    $dt_end = date_create($expiry_date);
+    $dt_diff = date_diff($dt_end, $dt_now);
+    $days_count = date_interval_format($dt_diff, "%a");
+    if ($days_count == 0 && $dt_end > $dt_now) {
+        $hours_count = date_interval_format($dt_diff, "%H %I");
+        return explode(' ', $hours_count);
+    }
+
+    return null;
+}
+
+/**
+ * Возаращает отформатированную строку
+ *
+ * @param string str строка для форматирования
+ *
+ * @return string отформатированная строка
+ */
+function esc($str) {
+    $text = htmlspecialchars($str);
+    return $text;
+}
+
+/**
+ * Возаращает список категорий
+ *
+ * @param string $link строка подключения
+ *
+ * @return array массив категорий
+ */
+function getCategories($link) {
+    $sqlCategories = 'SELECT `char_code`, `name` FROM categories';
+    $result = mysqli_query($link, $sqlCategories);
+    if ($result) {
+        $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        return $categories;
+    } else {
+        die(mysqli_error($link));
+    }
+}
+
+/**
+ * Функция выборки данных из БД
+ *
+ * @param string $link строка подключения
+ * @param string $sql шаблон запроса
+ * @param array $data массив для подстановки значений в запрос
+ *
+ * @return array результат запроса
+ */
+function db_fetch_data($link, $sql, $data = []) {
+    $result = [];
+    $stmt = db_get_prepare_stmt($link, $sql, $data);
+    $res = mysqli_stmt_execute($stmt);
+    if ($res) {
+        $result = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    }
+    return $result;
+}
+
+/**
+ * Функция добавления данны в БД
+ *
+ * @param string $link строка подключения
+ * @param string $sql шаблон запроса
+ * @param array $data массив для подстановки значений в запрос
+ *
+ * @return bool результат исполнения операции
+ */
+function db_insert_data($link, $sql, $data = []) {
+    $stmt = db_get_prepare_stmt($link, $sql, $data);
+    $result = mysqli_stmt_execute($stmt);
+    if ($result) {
+        $result = mysqli_insert_id($link);
+    }
+    return $result;
+}
+
+
+
+
+
+
 
