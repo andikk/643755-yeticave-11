@@ -286,7 +286,7 @@ function validateCategory($id, $allowed_list) {
 function validateLength($value, $min, $max) {
     if ($value) {
         $len = strlen($value);
-        if ($len < $min or $len > $max) {
+        if ($len < $min || $len > $max) {
             return "Значение должно быть от $min до $max символов";
         }
     }

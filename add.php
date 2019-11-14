@@ -5,14 +5,13 @@ require_once('init.php');
 require_once('helpers.php');
 
 $categories = getCategories($link);
-$errors = [];
-$page_content = include_template('add.php', ['categories' => $categories, 'errors' => $errors]);
+
 $cats_ids = [];
 $cats_ids = array_column($categories, 'id');
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $required = ['lot-name', 'category-id', 'message', 'lot-img', 'lot-rate', 'lot-step', 'lot-date'];
-   // $errors = [];
+    $errors = [];
 
     $rules = [
         'category-id' => function($value) use ($cats_ids) {
@@ -37,6 +36,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $lot = filter_input_array(INPUT_POST, ['lot-name' => FILTER_DEFAULT, 'message' => FILTER_DEFAULT,
         'category-id' => FILTER_DEFAULT, 'lot-date' => FILTER_DEFAULT, 'lot-rate' => FILTER_DEFAULT, 'lot-step' => FILTER_DEFAULT], true);
 
+    $fields = [
+        'lot-name' => 'Наименование',
+        'message' => 'Описание',
+        'category-id' => 'Категория',
+        'lot-date' => 'Дата окончания торгов ',
+        'lot-rate' => 'Начальная цена',
+        'lot-step' => 'Шаг ставки',
+    ];
+
     foreach ($lot as $key => $value) {
         if (isset($rules[$key])) {
             $rule = $rules[$key];
@@ -44,12 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         if (in_array($key, $required) && empty($value)) {
-            $errors[$key] = "Поле $key надо заполнить";
+            $errors[$key] = "Поле $fields[$key] надо заполнить";
         }
     }
 
     $errors = array_filter($errors);
-
 
     if (!empty($_FILES['lot-img']['name'])) {
         $tmp_name = $_FILES['lot-img']['tmp_name'];
@@ -64,8 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $errors['file'] = 'Загрузите картинку в форматах jpg, jpeg, png';
         }
         else {
-            move_uploaded_file($tmp_name, 'uploads/' . $filename);
-            $lot['path'] = $filename;
+            if (!count($errors)) {
+                move_uploaded_file($tmp_name, 'uploads/' . $filename);
+                $lot['path'] = $filename;
+            }
         }
     }
     else {
@@ -88,15 +97,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: lot.php?id=" . $lot_id);
         };
     }
+} else {
+    $page_content = include_template('add.php', ['categories' => $categories]);
 }
 
-
-$page_title = "Добавление лота";
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'categories' => $categories,
-    'title' => $page_title,
+    'title' => 'Добавление лота',
     'is_auth' => $is_auth,
     'user_name' => $user_name
 ]);
