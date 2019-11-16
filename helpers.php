@@ -199,7 +199,7 @@ function esc($str) {
  * @return array массив категорий
  */
 function getCategories($link) {
-    $sqlCategories = 'SELECT `char_code`, `name` FROM categories';
+    $sqlCategories = 'SELECT `id`, `char_code`, `name` FROM categories';
     $result = mysqli_query($link, $sqlCategories);
     if ($result) {
         $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -246,9 +246,97 @@ function db_insert_data($link, $sql, $data = []) {
     return $result;
 }
 
+/**
+ * Функция получения значения из параметра пост-запроса
+ *
+ * @param string $name строка с наименованием параметра пост-запроса
+ *
+ * @return string значение параметра пост-запроса
+ */
+function getPostVal($name) {
+    return filter_input(INPUT_POST, $name);
+}
+
+/**
+ * Функция валидации категории
+ *
+ * @param string $id id переданной категории
+ * @param string $allowed_list массив, из которого будут выбираться категории
+ *
+ * @return string текст ошибки валидации
+ */
+function validateCategory($id, $allowed_list) {
+    if (!in_array($id, $allowed_list)) {
+        return "Указана несуществующая категория";
+    }
+
+    return null;
+}
 
 
+/**
+ * Функция валидации длиный поля
+ *
+ * @param string $value значения поля
+ * @param int $min минимальная длина поля
+ * @param int $max максимальная длина поля
+ *
+ * @return string текст ошибки валидации
+ */
+function validateLength($value, $min, $max) {
+    if ($value) {
+        $len = strlen($value);
+        if ($len < $min || $len > $max) {
+            return "Значение должно быть от $min до $max символов";
+        }
+    }
 
+    return null;
+}
 
+/**
+ * Функция валидации цены лота
+ *
+ * @param string $value значения поля
+ *
+ * @return string текст ошибки валидации
+ */
+function validatePrice($value) {
+    if ((float) $value < 0) {
+        return "Значение должно быть больше 0";
+    }
 
+    return null;
+}
 
+/**
+ * Функция валидации шага лота
+ *
+ * @param string $value значения поля
+ *
+ * @return string текст ошибки валидации
+ */
+function validateStep($value) {
+    if ((int) $value < 0) {
+        return "Значение должно быть больше 0";
+    }
+
+    return null;
+}
+
+/**
+ * Функция валидации даты истечения лота
+ *
+ * @param string $value значения поля
+ *
+ * @return string текст ошибки валидации
+ */
+function validateDate($value) {
+    $future_dt = date('Y-m-d', strtotime("+1 days"));
+
+    if ($value < $future_dt || !is_date_valid($value)) {
+        return "Дата должна быть на один день больше текущей даты, а также должна быть в формате ГГГГ-ММ-ДД";
+    }
+
+    return null;
+}

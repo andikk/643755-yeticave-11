@@ -9,6 +9,7 @@ $lotId = filter_input(INPUT_GET, 'id');
 $sqlLot = "SELECT lots.name, lots.img, lots.description, expiry_date, first_price, step, categories.name as cat_name FROM lots JOIN categories ON lots.category_id = categories.id WHERE lots.id = '%s'";
 $sqlLot = sprintf($sqlLot, $lotId);
 $result = mysqli_query($link, $sqlLot);
+
 if ($result) {
     if (!mysqli_num_rows($result)) {
         http_response_code(404);
@@ -23,7 +24,6 @@ if ($result) {
         $page_title = $lot['name'];
     }
 }
-
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
