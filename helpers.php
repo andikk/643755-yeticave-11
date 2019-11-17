@@ -340,3 +340,33 @@ function validateDate($value) {
 
     return null;
 }
+
+/**
+ * Функция валидации e-mail
+ *
+ * @param string $value значения поля e-mail
+ *
+ * @return string текст ошибки валидации
+ */
+function validateEmail($value) {
+    if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+        return "Введите корректный email.";
+    }
+
+    return null;
+}
+
+function validatePostData($form, $rules, $required, $fields) {
+    foreach ($form as $key => $value) {
+        if (isset($rules[$key])) {
+            $rule = $rules[$key];
+            $errors[$key] = $rule($value);
+        }
+
+        if (in_array($key, $required) && empty($value)) {
+            $errors[$key] = "Поле $fields[$key] надо заполнить";
+        }
+    }
+
+    return $errors;
+}
