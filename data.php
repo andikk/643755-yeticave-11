@@ -1,3 +1,3 @@
 <?php
-$is_auth = rand(0, 1);
+$is_auth = false;
 $user_name = 'Андрей';

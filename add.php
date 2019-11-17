@@ -45,17 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'lot-step' => 'Шаг ставки',
     ];
 
-    foreach ($lot as $key => $value) {
-        if (isset($rules[$key])) {
-            $rule = $rules[$key];
-            $errors[$key] = $rule($value);
-        }
-
-        if (in_array($key, $required) && empty($value)) {
-            $errors[$key] = "Поле $fields[$key] надо заполнить";
-        }
-    }
-
+    $errors = validatePostData($lot, $rules, $required, $fields);
     $errors = array_filter($errors);
 
     if (!empty($_FILES['lot-img']['name'])) {
