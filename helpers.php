@@ -356,17 +356,17 @@ function validateEmail($value) {
     return null;
 }
 
-function validatePostData($form, $rules, $required, $fields) {
-    foreach ($form as $key => $value) {
+function validatePostData($postData, $rules, $required, $labels) {
+    foreach ($postData as $key => $value) {
         if (isset($rules[$key])) {
             $rule = $rules[$key];
             $errors[$key] = $rule($value);
         }
 
         if (in_array($key, $required) && empty($value)) {
-            $errors[$key] = "Поле $fields[$key] надо заполнить";
+            $errors[$key] = "Поле $labels[$key] надо заполнить";
         }
     }
 
-    return $errors;
+    return (!empty($errors)) ? $errors: [];
 }

@@ -7,8 +7,7 @@
       <?php endforeach; ?>
   </ul>
 </nav>
-<?php $form_classname = (isset($errors)) ? "form--invalid" : ""; ?>
-<form class="form container <?= $form_classname; ?>" action="register.php" method="post" autocomplete="off">
+<form class="form container <?= isset($errors) ? "form--invalid" : ""; ?>" action="register.php" method="post" autocomplete="off">
     <h2>Регистрация нового аккаунта</h2>
     <?php $classname = isset($errors['email']) ? "form__item--invalid" : ""; ?>
     <div class="form__item <?= $classname; ?>">
@@ -42,9 +41,9 @@
             <span class="form__error"><?= $errors['message']; ?></span>
         <?php endif ?>
     </div>
-    <?php if (isset($errors)): ?>
+    <?php if (!empty($errors)): ?>
         <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
     <?php endif; ?>
     <button type="submit" class="button">Зарегистрироваться</button>
-    <a class="text-link" href="#">Уже есть аккаунт</a>
+    <a class="text-link" href="login.php">Уже есть аккаунт</a>
 </form>

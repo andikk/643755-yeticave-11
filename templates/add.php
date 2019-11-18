@@ -7,8 +7,7 @@
       <?php endforeach; ?>
   </ul>
 </nav>
-<?php $form_classname = (isset($errors)) ? "form--invalid" : ""; ?>
-<form class="form form--add-lot container <?= $form_classname; ?>" action="add.php" method="post" enctype="multipart/form-data"> <!-- form--invalid -->
+<form class="form form--add-lot container <?= isset($errors) ? "form--invalid" : ""; ?>" action="add.php" method="post" enctype="multipart/form-data"> <!-- form--invalid -->
   <h2>Добавление лота</h2>
   <div class="form__container-two">
       <?php $classname = isset($errors['lot-name']) ? "form__item--invalid" : ""; ?>
@@ -81,6 +80,8 @@
       <?php endif ?>
     </div>
   </div>
-  <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
+  <?php if (!empty($errors)): ?>
+    <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
+  <?php endif ?>
   <button type="submit" class="button">Добавить лот</button>
 </form>
