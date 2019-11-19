@@ -1,22 +1,20 @@
 <?php
-require_once('data.php');
 require_once('init.php');
 require_once('helpers.php');
+require_once('data.php');
 
 $categories = getCategories($link);
-
-
+$errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $form = $_POST;
-    $errors = [];
 
     $required = ['email', 'password', 'name', 'message'];
 
     $rules = [
         'email' => function($value) {
             return validateEmail($value);
-        },
+        }
     ];
 
     $fields = [
@@ -39,25 +37,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $password = password_hash($form['password'], PASSWORD_DEFAULT);
 
-            $sql = 'INSERT INTO users (dt_add, email, name, password, contacts) VALUES (NOW(), ?, ?, ?, ?)';
+            $sql = 'INSERT INTO users (email, name, password, contacts) VALUES (?, ?, ?, ?)';
             $stmt = db_get_prepare_stmt($link, $sql, [$form['email'], $form['name'], $password, $form['message']]);
             $res = mysqli_stmt_execute($stmt);
         }
 
         if ($res && empty($errors)) {
-            header("Location: /pages/login.html");
+            header("Location: /login.php");
             exit();
         }
-
     }
-
-
-    $page_content = include_template('reg.php', ['categories' => $categories, 'errors' => $errors,]);
-} else {
-    $page_content = include_template('reg.php', ['categories' => $categories]);
 }
 
+$page_content = include_template('reg.php', ['categories' => $categories, 'errors' => $errors,]);
 
+if ($is_auth) {
+    http_response_code(403);
+    $page_content = include_template('error.php', ['error' => 'Вы уже зарегестрированы']);
+    $page_title = "Ошибка";
+}
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,

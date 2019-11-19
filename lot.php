@@ -1,7 +1,7 @@
 <?php
-require_once('data.php');
 require_once('init.php');
 require_once('helpers.php');
+require_once('data.php');
 
 $categories = getCategories($link);
 
@@ -20,7 +20,8 @@ if ($result) {
 
         $page_content = include_template('lot.php', ['categories' => $categories,
             'lot' => $lot,
-            'expiryTime' => get_dt_range($lot['expiry_date'])]);
+            'expiryTime' => get_dt_range($lot['expiry_date']),
+            'is_auth' => $is_auth]);
         $page_title = $lot['name'];
     }
 }

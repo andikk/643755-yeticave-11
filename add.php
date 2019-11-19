@@ -1,8 +1,7 @@
 <?php
-
-require_once('data.php');
 require_once('init.php');
 require_once('helpers.php');
+require_once('data.php');
 
 $categories = getCategories($link);
 
@@ -76,9 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $page_content = include_template('add.php', ['lot' => $lot, 'errors' => $errors, 'categories' => $categories]);
     }
     else {
-
-        $sql = 'INSERT INTO lots (name, description, category_id, expiry_date, first_price, step, img, dt_add, user_id, winner_id) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), 1, 2)';
+        $lot['user_id'] = $_SESSION['user']['id'];
+        $sql = 'INSERT INTO lots (name, description, category_id, expiry_date, first_price, step, img, user_id, winner_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 2)';
         $stmt = db_get_prepare_stmt($link, $sql, $lot);
+
         $res = mysqli_stmt_execute($stmt);
 
         if ($res) {
@@ -89,6 +89,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
     $page_content = include_template('add.php', ['categories' => $categories]);
+}
+
+if (!$is_auth) {
+    http_response_code(403);
+    $page_content = include_template('error.php', ['error' => 'Страница доступна только для авторизованных пользователей']);
+    $page_title = "Ошибка";
 }
 
 
