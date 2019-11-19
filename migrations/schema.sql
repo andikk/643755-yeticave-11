@@ -45,3 +45,5 @@ CREATE TABLE bets (
 
 CREATE INDEX user_id_bets ON bets(user_id);
 CREATE INDEX lot_id_bets ON bets(lot_id);
+
+CREATE FULLTEXT INDEX lot_search ON lots(name, description);

@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user'] = $user;
         }
         else {
-            $errors['password'] = 'Неверный пароль';
+            $errors['password'] = 'Неверный логин или пароль';
         }
     } else {
         if (!count($errors)) {
