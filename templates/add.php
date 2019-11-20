@@ -80,8 +80,6 @@
       <?php endif ?>
     </div>
   </div>
-  <?php if (!empty($errors)): ?>
-    <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
-  <?php endif ?>
+  <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
   <button type="submit" class="button">Добавить лот</button>
 </form>
