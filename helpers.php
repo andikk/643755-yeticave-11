@@ -145,9 +145,7 @@ function include_template($name, array $data = []) {
 
 /**
  * Форматирует цену
- *
  * @param string $price цена
- *
  * @return string отформатированная цена
  */
 function format_price($price) {
@@ -160,10 +158,37 @@ function format_price($price) {
 }
 
 /**
+ * Форматирует дату ставки
+ * если переданная дата меньше одного дня, то возвращается строка вида "4 часа 15 минут назад"
+ * если переданная дата меньше одного часа, то возвращается строка вида "15 минут назад"
+ * в остальных случаях возвращается дата в вида "21.11.2019 в 13:04"
+ * @param string $dt дата
+ * @return string отформатированная дата
+ */
+function format_bet_date($dt) {
+    $formattedDate = date_create($dt);
+    $dt_now = date_create("now");
+    $dt_diff = date_diff($dt_now, $formattedDate);
+    $days_count = date_interval_format($dt_diff, "%a");
+    $hours_count = date_interval_format($dt_diff, "%h");
+    $min_count = date_interval_format($dt_diff, "%i");
+    $lastMinWord = get_noun_plural_form((int) $min_count,'минуту','минуты','минут');
+    $lastHoursWord = get_noun_plural_form((int) $hours_count,'час','часа','часов');
+
+    if ($days_count === "0") {
+        if ($hours_count === "0") {
+            return ($min_count > 1) ? $min_count . " $lastMinWord назад": "только что" ;
+        } else {
+            return  "$hours_count $lastHoursWord, $min_count $lastMinWord назад";
+        }
+    }
+
+    return date_format($formattedDate,'d.m.Y в H:i');
+}
+
+/**
  * Возаращает время истечения лота
- *
  * @param string expiry_date дата истечения лота
- *
  * @return array дата и время истечения лота
  */
 function get_dt_range($expiry_date) {
@@ -171,7 +196,8 @@ function get_dt_range($expiry_date) {
     $dt_end = date_create($expiry_date);
     $dt_diff = date_diff($dt_end, $dt_now);
     $days_count = date_interval_format($dt_diff, "%a");
-    if ($days_count == 0 && $dt_end > $dt_now) {
+
+    if ($days_count === 0 && $dt_end > $dt_now) {
         $hours_count = date_interval_format($dt_diff, "%H %I");
         return explode(' ', $hours_count);
     }
@@ -181,9 +207,7 @@ function get_dt_range($expiry_date) {
 
 /**
  * Возаращает отформатированную строку
- *
  * @param string str строка для форматирования
- *
  * @return string отформатированная строка
  */
 function esc($str) {
@@ -193,9 +217,7 @@ function esc($str) {
 
 /**
  * Возаращает список категорий
- *
  * @param string $link строка подключения
- *
  * @return array массив категорий
  */
 function getCategories($link) {
@@ -210,47 +232,8 @@ function getCategories($link) {
 }
 
 /**
- * Функция выборки данных из БД
- *
- * @param string $link строка подключения
- * @param string $sql шаблон запроса
- * @param array $data массив для подстановки значений в запрос
- *
- * @return array результат запроса
- */
-function db_fetch_data($link, $sql, $data = []) {
-    $result = [];
-    $stmt = db_get_prepare_stmt($link, $sql, $data);
-    $res = mysqli_stmt_execute($stmt);
-    if ($res) {
-        $result = mysqli_fetch_all($res, MYSQLI_ASSOC);
-    }
-    return $result;
-}
-
-/**
- * Функция добавления данны в БД
- *
- * @param string $link строка подключения
- * @param string $sql шаблон запроса
- * @param array $data массив для подстановки значений в запрос
- *
- * @return bool результат исполнения операции
- */
-function db_insert_data($link, $sql, $data = []) {
-    $stmt = db_get_prepare_stmt($link, $sql, $data);
-    $result = mysqli_stmt_execute($stmt);
-    if ($result) {
-        $result = mysqli_insert_id($link);
-    }
-    return $result;
-}
-
-/**
  * Функция получения значения из параметра пост-запроса
- *
  * @param string $name строка с наименованием параметра пост-запроса
- *
  * @return string значение параметра пост-запроса
  */
 function getPostVal($name) {
@@ -259,10 +242,8 @@ function getPostVal($name) {
 
 /**
  * Функция валидации категории
- *
  * @param string $id id переданной категории
- * @param string $allowed_list массив, из которого будут выбираться категории
- *
+ * @param array $allowed_list массив, из которого будут выбираться категории
  * @return string текст ошибки валидации
  */
 function validateCategory($id, $allowed_list) {
@@ -273,14 +254,11 @@ function validateCategory($id, $allowed_list) {
     return null;
 }
 
-
 /**
  * Функция валидации длиный поля
- *
  * @param string $value значения поля
  * @param int $min минимальная длина поля
  * @param int $max максимальная длина поля
- *
  * @return string текст ошибки валидации
  */
 function validateLength($value, $min, $max) {
@@ -295,10 +273,25 @@ function validateLength($value, $min, $max) {
 }
 
 /**
- * Функция валидации цены лота
- *
+ * Функция валидации ставки
  * @param string $value значения поля
- *
+ * @param float $price текущая цена
+ * @param float $step шаг ставки
+ * @return string текст ошибки валидации
+ */
+function validateCost($value, $price, $step) {
+    $minCost = $price + $step;
+
+    if ($value < $minCost) {
+        return "Минимальная ставка должна быть равна текущей цене плюс шаг торгов";
+    }
+
+    return null;
+}
+
+/**
+ * Функция валидации цены лота при его добавлении
+ * @param string $value значения поля
  * @return string текст ошибки валидации
  */
 function validatePrice($value) {
@@ -311,9 +304,7 @@ function validatePrice($value) {
 
 /**
  * Функция валидации шага лота
- *
  * @param string $value значения поля
- *
  * @return string текст ошибки валидации
  */
 function validateStep($value) {
@@ -326,9 +317,7 @@ function validateStep($value) {
 
 /**
  * Функция валидации даты истечения лота
- *
  * @param string $value значения поля
- *
  * @return string текст ошибки валидации
  */
 function validateDate($value) {
@@ -343,9 +332,7 @@ function validateDate($value) {
 
 /**
  * Функция валидации e-mail
- *
  * @param string $value значения поля e-mail
- *
  * @return string текст ошибки валидации
  */
 function validateEmail($value) {
@@ -356,6 +343,14 @@ function validateEmail($value) {
     return null;
 }
 
+/**
+ * Функция валидации данных, отправленных из формы
+ * @param array $postData данные из формы в пост-запросе
+ * @param array $rules массив с правилами валидации
+ * @param array $required массив с правилами валидации
+ * @param array $labels словарь с подписями полей
+ * @return array массив с ошибками валидации
+ */
 function validatePostData($postData, $rules, $required, $labels) {
     foreach ($postData as $key => $value) {
         if (isset($rules[$key])) {

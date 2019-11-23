@@ -7,7 +7,7 @@
       <?php endforeach; ?>
   </ul>
 </nav>
-<form class="form container <?= isset($errors) ? "form--invalid" : ""; ?>" action="register.php" method="post" autocomplete="off">
+<form class="form container <?= !empty($errors) ? "form--invalid" : ""; ?>" action="register.php" method="post" autocomplete="off">
     <h2>Регистрация нового аккаунта</h2>
     <?php $classname = isset($errors['email']) ? "form__item--invalid" : ""; ?>
     <div class="form__item <?= $classname; ?>">

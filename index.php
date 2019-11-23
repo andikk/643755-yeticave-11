@@ -6,11 +6,7 @@ require_once('data.php');
 $categories = getCategories($link);
 
 $sqlLots = <<<SQL
-SELECT lots.id, lots.name, lots.first_price, lots.img, lots.expiry_date, categories.name as category,
-   CASE
-        WHEN (SELECT MAX(price) FROM bets WHERE bets.lot_id = lots.id) > 0 THEN (SELECT MAX(price) FROM bets WHERE bets.lot_id = lots.id)
-        ELSE lots.first_price
-   END AS price
+SELECT lots.id, lots.name, lots.first_price as price, lots.img, lots.expiry_date, categories.name as category
    FROM lots JOIN categories ON lots.category_id = categories.id
    WHERE lots.expiry_date > CURDATE() ORDER BY lots.expiry_date DESC;
 SQL;
