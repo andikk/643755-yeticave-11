@@ -13,7 +13,7 @@ if ($search) {
     $cur_page = $_GET['page'] ?? 1;
     $page_items = 9;
 
-    $sql = "SELECT * FROM lots WHERE MATCH(name, description) AGAINST(?)";
+    $sql = "SELECT * FROM lots WHERE MATCH(name, description) AGAINST(?) AND lots.expiry_date > CURDATE() AND lots.winner_id = 0";
     $stmt = db_get_prepare_stmt($link, $sql, [$search]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -24,20 +24,19 @@ if ($search) {
         $offset = ($cur_page - 1) * $page_items;
         $pages = range(1, $pages_count);
 
-        $sqlSearch = 'SELECT * FROM lots WHERE MATCH(name, description) AGAINST(?) LIMIT ' . $page_items . ' OFFSET ' . $offset;
-        $stmtSearch = db_get_prepare_stmt($link, $sqlSearch, [$search]);
-        mysqli_stmt_execute($stmtSearch);
-        $resultSearch = mysqli_stmt_get_result($stmtSearch);
+        $sql_search = 'SELECT * FROM lots WHERE MATCH(name, description) AGAINST(?) AND lots.expiry_date > CURDATE() AND lots.winner_id = 0 LIMIT ' . $page_items . ' OFFSET ' . $offset;
+        $stmt_search = db_get_prepare_stmt($link, $sql_search, [$search]);
+        mysqli_stmt_execute($stmt_search);
+        $result_search = mysqli_stmt_get_result($stmt_search);
 
-        $lots = mysqli_fetch_all($resultSearch, MYSQLI_ASSOC);
-
+        $lots = mysqli_fetch_all($result_search, MYSQLI_ASSOC);
     } else {
         die(mysqli_error($link));
     }
 }
 
-$prevPageLink = !($cur_page - 1) ? '#' : $url . '&page=' . ($cur_page - 1);
-$nextPageLink = ((int) $cur_page === (int) $pages_count) ? '#' : $url . '&page=' . ($cur_page + 1);
+$prev_page_link = !($cur_page - 1) ? '#' : $url . '&page=' . ($cur_page - 1);
+$next_page_link = ((int) $cur_page === (int) $pages_count) ? '#' : $url . '&page=' . ($cur_page + 1);
 
 $page_content = include_template('search.php', ['categories' => $categories,
                                                        'search' => $search,
@@ -46,8 +45,8 @@ $page_content = include_template('search.php', ['categories' => $categories,
                                                        'pages_count' => $pages_count,
                                                        'url' => $url,
                                                        'cur_page' => $cur_page,
-                                                       'prevPageLink' => $prevPageLink,
-                                                       'nextPageLink' => $nextPageLink]);
+                                                       'prev_page_link' => $prev_page_link,
+                                                       'next_page_link' => $next_page_link]);
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
@@ -55,7 +54,7 @@ $layout_content = include_template('layout.php', [
     'title' => 'Результаты поиска по запросу ' . $search,
     'is_auth' => $is_auth,
     'user_name' => $user_name,
-    'isMain' => false
+    'is_main' => false
 ]);
 
 print($layout_content);

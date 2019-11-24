@@ -4,10 +4,10 @@ require_once('helpers.php');
 require_once('data.php');
 $errors = [];
 $categories = getCategories($link);
-$lotId = filter_input(INPUT_GET, 'id');
+$lot_id = filter_input(INPUT_GET, 'id');
 
-$sqlLot = <<<SQL
-SELECT lots.id, lots.name, lots.first_price, lots.img, lots.expiry_date, lots.step, categories.name AS category,
+$sql_lot = <<<SQL
+SELECT lots.id, lots.name, lots.user_id, lots.first_price, lots.img, lots.expiry_date, lots.step, categories.name AS category,
    CASE
         WHEN (SELECT MAX(price) FROM bets WHERE bets.lot_id = lots.id) > 0 THEN (SELECT MAX(price) FROM bets WHERE bets.lot_id = lots.id)
         ELSE lots.first_price
@@ -16,8 +16,8 @@ SELECT lots.id, lots.name, lots.first_price, lots.img, lots.expiry_date, lots.st
    WHERE lots.id = '%s';
 SQL;
 
-$sqlLot = sprintf($sqlLot, $lotId);
-$result = mysqli_query($link, $sqlLot);
+$sql_lot = sprintf($sql_lot, $lot_id);
+$result = mysqli_query($link, $sql_lot);
 
 if ($result) {
     if (!mysqli_num_rows($result)) {
@@ -26,16 +26,16 @@ if ($result) {
         $page_title = "Даннай лот не найден";
     } else {
         $lot = mysqli_fetch_all($result, MYSQLI_ASSOC)[0];
-        $minPrice = $lot['price'];
+        $min_price = $lot['price'];
         $step = $lot['step'];
         $bets = [];
 
-        $sqlBets = "SELECT users.name AS user, bets.price AS price, bets.dt_add AS time, users.id AS user_id FROM bets JOIN users ON bets.user_id = users.id WHERE bets.lot_id = $lotId ORDER BY bets.dt_add DESC";
-        $sqlBetsResult = mysqli_query($link, $sqlBets);
+        $sql_bets = "SELECT users.name AS user, bets.price AS price, bets.dt_add AS time, users.id AS user_id FROM bets JOIN users ON bets.user_id = users.id WHERE bets.lot_id = $lotId ORDER BY bets.dt_add DESC";
+        $sql_bets_result = mysqli_query($link, $sql_bets);
 
-        if ($sqlBetsResult) {
-           if (mysqli_num_rows($sqlBetsResult)) {
-                $bets = mysqli_fetch_all($sqlBetsResult, MYSQLI_ASSOC);
+        if ($sql_bets_result) {
+           if (mysqli_num_rows($sql_bets_result)) {
+                $bets = mysqli_fetch_all($sql_bets_result, MYSQLI_ASSOC);
            }
         }
 
@@ -44,8 +44,8 @@ if ($result) {
             $form = $_POST;
 
             $rules = [
-                'cost' => function($value) use ($minPrice, $step) {
-                    return validateCost($value, $minPrice, $step);
+                'cost' => function($value) use ($min_price, $step) {
+                    return validateCost($value, $min_price, $step);
                 }
             ];
 
@@ -66,17 +66,17 @@ if ($result) {
             }
         }
 
-        $lotIsOpen = (date_create($lot['expiry_date']) > date_create("now"));
-        $lastBetAddedByCurrentUser = ($bets[0]['user_id'] === $user_id);
-        $lotOfCurrentUser = ($lot['user_id'] === $user_id);
+        $lot_is_open = (date_create($lot['expiry_date']) > date_create("now"));
+        $last_bet_added_by_current_user = ($bets[0]['user_id'] === $user_id);
+        $lot_of_current_user = ($lot['user_id'] === $user_id);
 
-        $showBetBlock = ($is_auth && $lotIsOpen && !$lotOfCurrentUser && !$lastBetAddedByCurrentUser);
+        $show_bet_block = ($is_auth && $lot_is_open && !$lot_of_current_user && !$last_bet_added_by_current_user);
 
         $page_content = include_template('lot.php', ['categories' => $categories,
                                                             'lot' => $lot,
                                                             'expiryTime' => get_dt_range($lot['expiry_date']),
                                                             'is_auth' => $is_auth,
-                                                            'showBetBlock' => $showBetBlock,
+                                                            'showBetBlock' => $show_bet_block,
                                                             'errors' => $errors,
                                                             'bets' => $bets]);
     }
@@ -85,10 +85,10 @@ if ($result) {
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'categories' => $categories,
-    'title' => $lot['name'],
+    'title' => $lot['name'] ?? '',
     'is_auth' => $is_auth,
     'user_name' => $user_name,
-    'isMain' => false,
+    'is_main' => false,
 ]);
 
 print($layout_content);

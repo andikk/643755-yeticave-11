@@ -22,11 +22,11 @@
     </section>
     <?php if ($pages_count > 1): ?>
         <ul class="pagination-list">
-            <li class="pagination-item pagination-item-prev"><a href="<?=$prevPageLink?>">Назад</a></li>
+            <li class="pagination-item pagination-item-prev"><a href="<?=$prev_page_link?>">Назад</a></li>
             <?php foreach ($pages as $page): ?>
                 <li class="pagination-item <?php if ($page == $cur_page): ?>pagination-item-active<?php endif; ?>"><a href="<?=$url?>&page=<?=$page;?>"><?=$page;?></a></li>
             <?php endforeach; ?>
-            <li class="pagination-item pagination-item-next"><a href="<?=$nextPageLink?>">Вперед</a></li>
+            <li class="pagination-item pagination-item-next"><a href="<?=$next_page_link?>">Вперед</a></li>
         </ul>
     <?php endif ?>
 </div>

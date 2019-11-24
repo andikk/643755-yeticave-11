@@ -34,7 +34,7 @@
                         Мин. ставка <span><?= esc($lot['step']) ?></span>
                     </div>
                 </div>
-                <?php if ($showBetBlock) :?>
+                <?php if ($show_bet_block) :?>
                     <form class="lot-item__form" action="<?= 'lot.php?id='.$lot['id'] ?>" method="post" autocomplete="off">
                         <?php $classname = isset($errors['cost']) ? "form__item--invalid" : ""; ?>
                         <p class="lot-item__form-item form__item <?= $classname; ?>">

@@ -43,7 +43,7 @@
     </div>
 </header>
 
-<main class="<?= ($isMain) ? 'container' : ''?>">
+<main class="<?= ($is_main) ? 'container' : ''?>">
     <?=$content;?>
 </main>
 </div>
