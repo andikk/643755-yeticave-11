@@ -52,7 +52,7 @@ $page_content = include_template('search.php', ['categories' => $categories,
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'categories' => $categories,
-    'title' => 'Результаты поиска',
+    'title' => 'Результаты поиска по запросу ' . $search,
     'is_auth' => $is_auth,
     'user_name' => $user_name,
     'isMain' => false
