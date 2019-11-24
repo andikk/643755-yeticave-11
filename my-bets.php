@@ -8,8 +8,8 @@ $categories = getCategories($link);
 $rates = [];
 
 $sqlRates = <<<SQL
-SELECT users.contacts, lots.id as lot_id, lots.img as lot_img, lots.expiry_date, lots.name as lot_name, categories.name as lot_category, bets.price, bets.dt_add FROM bets 
-JOIN lots ON lots.id = bets.lot_id JOIN categories ON categories.id = lots.category_id JOIN users ON users.id = lots.winner_id 
+SELECT lots.winner_id, (SELECT users.contacts FROM users WHERE users.id = lots.winner_id) AS contacts, lots.id AS lot_id, lots.img AS lot_img, lots.expiry_date, lots.name AS lot_name, categories.name AS lot_category, bets.price, bets.dt_add FROM bets 
+JOIN lots ON lots.id = bets.lot_id JOIN categories ON categories.id = lots.category_id  
 WHERE bets.user_id = $user_id ORDER BY bets.dt_add DESC
 SQL;
 
@@ -37,7 +37,7 @@ if ($result) {
                 $rates[$key]['rate_class'] = 'rates__item--end';
             }
 
-            if ($rate['contacts']) {
+            if ($rate['winner_id']) {
                 $rates[$key]['timer_class'] = 'timer--win';
                 $rates[$key]['timer_message'] = 'Ставка выиграла';
                 $rates[$key]['rate_class'] = 'rates__item--win';
@@ -56,7 +56,8 @@ $layout_content = include_template('layout.php', [
     'categories' => $categories,
     'title' => 'Мои лоты',
     'is_auth' => $is_auth,
-    'user_name' => $user_name
+    'user_name' => $user_name,
+    'isMain' => false
 ]);
 
 print($layout_content);

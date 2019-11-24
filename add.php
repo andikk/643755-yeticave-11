@@ -102,7 +102,8 @@ $layout_content = include_template('layout.php', [
     'categories' => $categories,
     'title' => 'Добавление лота',
     'is_auth' => $is_auth,
-    'user_name' => $user_name
+    'user_name' => $user_name,
+    'isMain' => false,
 ]);
 
 print($layout_content);

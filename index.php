@@ -6,7 +6,7 @@ require_once('data.php');
 $categories = getCategories($link);
 
 $sqlLots = <<<SQL
-SELECT lots.id, lots.name, lots.first_price as price, lots.img, lots.expiry_date, categories.name as category
+SELECT lots.id, lots.name, lots.first_price, lots.img, lots.expiry_date, categories.name AS category
    FROM lots JOIN categories ON lots.category_id = categories.id
    WHERE lots.expiry_date > CURDATE() ORDER BY lots.expiry_date DESC;
 SQL;

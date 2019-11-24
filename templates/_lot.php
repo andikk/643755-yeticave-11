@@ -8,7 +8,7 @@
         <div class="lot__state">
             <div class="lot__rate">
                 <span class="lot__amount">Стартовая цена</span>
-                <span class="lot__cost"><?= format_price(esc($lot['price'])) ?></span>
+                <span class="lot__cost"><?= format_price(esc($lot['first_price'])) ?></span>
             </div>
             <?php if ($expiryTime) :?>
                 <div class="lot__timer timer <?= (int) $expiryTime[0] === 0 ? 'timer--finishing' : ''?>">

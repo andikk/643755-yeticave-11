@@ -19,7 +19,9 @@
                     </div>
                     <div>
                         <h3 class="rates__title"><a href="<?= 'lot.php?id=' . $rate['lot_id'] ?>"><?= esc($rate['lot_name']) ?></a></h3>
-                        <p><?= $rate['contacts'] ?></p>
+                        <?php if ($rate['winner_id']): ?>
+                            <p><?= esc($rate['contacts']) ?></p>
+                        <?php endif; ?>
                     </div>
                 </td>
                 <td class="rates__category">
