@@ -13,7 +13,7 @@ if ($search) {
     $cur_page = $_GET['page'] ?? 1;
     $page_items = 9;
 
-    $sql = "SELECT * FROM lots WHERE MATCH(name, description) AGAINST(?) AND lots.expiry_date > CURDATE() AND lots.winner_id = 0";
+    $sql = "SELECT  lots.*, categories.name AS category FROM lots JOIN categories ON lots.category_id = categories.id WHERE MATCH(name, description) AGAINST(?) AND lots.expiry_date > CURDATE() AND lots.winner_id = 0";
     $stmt = db_get_prepare_stmt($link, $sql, [$search]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -24,7 +24,11 @@ if ($search) {
         $offset = ($cur_page - 1) * $page_items;
         $pages = range(1, $pages_count);
 
-        $sql_search = 'SELECT * FROM lots WHERE MATCH(name, description) AGAINST(?) AND lots.expiry_date > CURDATE() AND lots.winner_id = 0 LIMIT ' . $page_items . ' OFFSET ' . $offset;
+        $sql_search = <<<SQL
+SELECT lots.*, categories.name AS category FROM lots JOIN categories ON lots.category_id = categories.id
+WHERE MATCH(name, description) AGAINST(?) AND lots.expiry_date > CURDATE() AND lots.winner_id = 0 
+LIMIT $page_items OFFSET $offset;
+SQL;
         $stmt_search = db_get_prepare_stmt($link, $sql_search, [$search]);
         mysqli_stmt_execute($stmt_search);
         $result_search = mysqli_stmt_get_result($stmt_search);

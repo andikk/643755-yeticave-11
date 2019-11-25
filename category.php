@@ -27,7 +27,7 @@ if ($result) {
     $pages = range(1, $pages_count);
 
     $sql_lots = <<<SQL
-SELECT lots.*, categories.name AS category_name FROM lots JOIN categories ON  lots.category_id = categories.id
+SELECT lots.*, categories.name AS category FROM lots JOIN categories ON  lots.category_id = categories.id
 WHERE lots.category_id = '%s' AND lots.expiry_date > CURDATE() AND lots.winner_id = '0' LIMIT  $page_items  OFFSET $offset;
 SQL;
     $sql_lots = sprintf($sql_lots, $category_id);
@@ -41,7 +41,7 @@ $prev_page_link = !($cur_page - 1) ? '#' : $url . '&page=' . ($cur_page - 1);
 $next_page_link = ((int) $cur_page === (int) $pages_count) ? '#' : $url . '&page=' . ($cur_page + 1);
 
 $page_content = include_template('category.php', ['categories' => $categories,
-                                                       'category_name' => $lots[0]['category_name'] ?? '',
+                                                       'category_name' => $lots[0]['category'] ?? '',
                                                        'lots' => $lots,
                                                        'pages' => $pages,
                                                        'pages_count' => $pages_count,
@@ -53,7 +53,7 @@ $page_content = include_template('category.php', ['categories' => $categories,
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'categories' => $categories,
-    'title' => 'Все лоты в категории ' . $lots[0]['category_name'] ?? '',
+    'title' => 'Все лоты в категории ' . $lots[0]['category'] ?? '',
     'is_auth' => $is_auth,
     'user_name' => $user_name,
     'is_main' => false
