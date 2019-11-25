@@ -13,7 +13,7 @@ if ($search) {
     $cur_page = $_GET['page'] ?? 1;
     $page_items = 9;
 
-    $sql = "SELECT  lots.*, categories.name AS category FROM lots JOIN categories ON lots.category_id = categories.id WHERE MATCH(name, description) AGAINST(?) AND lots.expiry_date > CURDATE() AND lots.winner_id = 0";
+    $sql = "SELECT  lots.*, categories.name AS category FROM lots JOIN categories ON lots.category_id = categories.id WHERE MATCH(lots.name, lots.description) AGAINST(?) AND lots.expiry_date > CURDATE() AND lots.winner_id = 0";
     $stmt = db_get_prepare_stmt($link, $sql, [$search]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -26,7 +26,7 @@ if ($search) {
 
         $sql_search = <<<SQL
 SELECT lots.*, categories.name AS category FROM lots JOIN categories ON lots.category_id = categories.id
-WHERE MATCH(name, description) AGAINST(?) AND lots.expiry_date > CURDATE() AND lots.winner_id = 0 
+WHERE MATCH(lots.name, lots.description) AGAINST(?) AND lots.expiry_date > CURDATE() AND lots.winner_id = 0 
 LIMIT $page_items OFFSET $offset;
 SQL;
         $stmt_search = db_get_prepare_stmt($link, $sql_search, [$search]);
