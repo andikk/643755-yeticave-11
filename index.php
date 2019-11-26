@@ -2,6 +2,7 @@
 require_once('init.php');
 require_once('helpers.php');
 require_once('data.php');
+require_once('getwinner.php');
 
 $categories = getCategories($link);
 

@@ -20,7 +20,11 @@ SQL;
 $sql = sprintf($sql, $category_id);
 $result = mysqli_query($link, $sql);
 
-if ($result) {
+if (!$result) {
+    die(mysqli_error($link));
+}
+
+if (mysqli_num_rows($result)) {
     $items_count =  (mysqli_num_rows($result));
     $pages_count = ceil($items_count / $page_items);
     $offset = ($cur_page - 1) * $page_items;
@@ -33,27 +37,29 @@ SQL;
     $sql_lots = sprintf($sql_lots, $category_id);
     $result_lots = mysqli_query($link, $sql_lots);
     $lots = mysqli_fetch_all($result_lots, MYSQLI_ASSOC);
+
+    $prev_page_link = !($cur_page - 1) ? '#' : $url . '&page=' . ($cur_page - 1);
+    $next_page_link = ((int) $cur_page === (int) $pages_count) ? '#' : $url . '&page=' . ($cur_page + 1);
+    $title = 'Все лоты в категории ' . empty($lots) ? '' : $lots[0]['category'];
+    $page_content = include_template('category.php', ['categories' => $categories,
+        'category_name' => $lots[0]['category'] ?? '',
+        'lots' => $lots,
+        'pages' => $pages,
+        'pages_count' => $pages_count,
+        'url' => $url,
+        'cur_page' => $cur_page,
+        'prev_page_link' => $prev_page_link,
+        'next_page_link' => $next_page_link]);
 } else {
-    die(mysqli_error($link));
+    $page_content = include_template('error.php', ['error' => 'В данной категории нет лотов или категория не существует',
+                                                          'categories' => $categories]);
+    $title = "В данной категории нет лотов";
 }
-
-$prev_page_link = !($cur_page - 1) ? '#' : $url . '&page=' . ($cur_page - 1);
-$next_page_link = ((int) $cur_page === (int) $pages_count) ? '#' : $url . '&page=' . ($cur_page + 1);
-
-$page_content = include_template('category.php', ['categories' => $categories,
-                                                       'category_name' => $lots[0]['category'] ?? '',
-                                                       'lots' => $lots,
-                                                       'pages' => $pages,
-                                                       'pages_count' => $pages_count,
-                                                       'url' => $url,
-                                                       'cur_page' => $cur_page,
-                                                       'prev_page_link' => $prev_page_link,
-                                                       'next_page_link' => $next_page_link]);
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'categories' => $categories,
-    'title' => 'Все лоты в категории ' . $lots[0]['category'] ?? '',
+    'title' => $title,
     'is_auth' => $is_auth,
     'user_name' => $user_name,
     'is_main' => false

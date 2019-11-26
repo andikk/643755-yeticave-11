@@ -10,9 +10,6 @@
 <div class="container">
     <section class="lots">
         <h2>Все лоты в категории «<span><?= $category_name ?></span>»</h2>
-        <?php if (empty($lots)): ?>
-            <p>В данного категории нет лотов</p>
-        <?php endif ?>
         <ul class="lots__list">
             <?php foreach ($lots as $lot): ?>
                 <?=include_template('_lot.php', ['lot' => $lot,
