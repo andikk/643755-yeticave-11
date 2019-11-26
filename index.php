@@ -5,17 +5,13 @@ require_once('data.php');
 
 $categories = getCategories($link);
 
-$sqlLots = <<<SQL
-SELECT lots.id, lots.name, lots.first_price, lots.img, lots.expiry_date, categories.name as category,
-   CASE
-        WHEN (SELECT MAX(price) FROM bets WHERE bets.lot_id = lots.id) > 0 THEN (SELECT MAX(price) FROM bets WHERE bets.lot_id = lots.id)
-        ELSE lots.first_price
-   END AS price
+$sql_lots = <<<SQL
+SELECT lots.id, lots.name, lots.first_price, lots.img, lots.expiry_date, categories.name AS category
    FROM lots JOIN categories ON lots.category_id = categories.id
-   WHERE lots.expiry_date > CURDATE() ORDER BY lots.expiry_date DESC;
+   WHERE lots.expiry_date > CURDATE() AND lots.winner_id = 0 ORDER BY lots.expiry_date DESC
 SQL;
 
-$result = mysqli_query($link, $sqlLots);
+$result = mysqli_query($link, $sql_lots);
 
 if ($result) {
     $lots = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -27,7 +23,7 @@ if ($result) {
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'categories' => $categories,
-    'isMain' => true,
+    'is_main' => true,
     'title' => 'Главная страница',
     'is_auth' => $is_auth,
     'user_name' => $user_name

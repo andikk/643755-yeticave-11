@@ -58,7 +58,8 @@ $layout_content = include_template('layout.php', [
     'categories' => $categories,
     'title' => 'Регистрация пользователя',
     'is_auth' => $is_auth,
-    'user_name' => $user_name
+    'user_name' => $user_name,
+    'is_main' => false,
 ]);
 
 print($layout_content);

@@ -2,7 +2,7 @@
     <ul class="nav__list container">
         <?php foreach ($categories as $category): ?>
             <li class="nav__item">
-                <a href="all-lots.html"><?= esc($category['name']) ?></a>
+                <a href="category.php?id=<?=$category['id']?>"><?= esc($category['name']) ?></a>
             </li>
         <?php endforeach; ?>
     </ul>

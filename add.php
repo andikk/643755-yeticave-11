@@ -70,13 +70,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['file'] = 'Вы не загрузили файл';
     }
 
-
     if (count($errors)) {
         $page_content = include_template('add.php', ['lot' => $lot, 'errors' => $errors, 'categories' => $categories]);
     }
     else {
         $lot['user_id'] = $_SESSION['user']['id'];
-        $sql = 'INSERT INTO lots (name, description, category_id, expiry_date, first_price, step, img, user_id, winner_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 2)';
+        $sql = 'INSERT INTO lots (name, description, category_id, expiry_date, first_price, step, img, user_id, winner_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)';
         $stmt = db_get_prepare_stmt($link, $sql, $lot);
 
         $res = mysqli_stmt_execute($stmt);
@@ -103,7 +102,8 @@ $layout_content = include_template('layout.php', [
     'categories' => $categories,
     'title' => 'Добавление лота',
     'is_auth' => $is_auth,
-    'user_name' => $user_name
+    'user_name' => $user_name,
+    'is_main' => false,
 ]);
 
 print($layout_content);
