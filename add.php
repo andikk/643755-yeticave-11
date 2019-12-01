@@ -58,31 +58,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($file_type !== "image/jpeg" && $file_type !== "image/png") {
             $errors['file'] = 'Загрузите картинку в форматах jpg, jpeg, png';
-        }
-        else {
+        } else {
             if (!count($errors)) {
                 move_uploaded_file($tmp_name, 'uploads/' . $filename);
                 $lot['path'] = $filename;
             }
         }
-    }
-    else {
+    } else {
         $errors['file'] = 'Вы не загрузили файл';
     }
 
     if (count($errors)) {
         $page_content = include_template('add.php', ['lot' => $lot, 'errors' => $errors, 'categories' => $categories]);
-    }
-    else {
+    } else {
         $lot['user_id'] = $_SESSION['user']['id'];
         $sql = 'INSERT INTO lots (name, description, category_id, expiry_date, first_price, step, img, user_id, winner_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)';
         $stmt = db_get_prepare_stmt($link, $sql, $lot);
-
         $res = mysqli_stmt_execute($stmt);
 
         if ($res) {
             $lot_id = mysqli_insert_id($link);
-
             header("Location: lot.php?id=" . $lot_id);
         };
     }
@@ -95,7 +90,6 @@ if (!$is_auth) {
     $page_content = include_template('error.php', ['error' => 'Страница доступна только для авторизованных пользователей']);
     $page_title = "Ошибка";
 }
-
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,

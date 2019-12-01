@@ -17,7 +17,8 @@ $result = mysqli_query($link, $sqlRates);
 
 if ($result) {
     if (!mysqli_num_rows($result)) {
-        $page_content = include_template('error.php', ['error' => 'Ставок нет']);
+        $page_content = include_template('error.php', ['error' => 'Ставок нет',
+                                                              'categories' => $categories]);
     } else {
         $rates = mysqli_fetch_all($result, MYSQLI_ASSOC);
         foreach ($rates as $key => $rate) {
@@ -48,7 +49,7 @@ if ($result) {
                                                                 'rates' => $rates]);
     }
 } else {
-    $page_content = include_template('error.php', ['error' => 'Ошибка запроса']);
+    $page_content = include_template('error.php', ['error' => mysqli_error($link)]);
 }
 
 $layout_content = include_template('layout.php', [
