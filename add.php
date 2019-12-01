@@ -87,7 +87,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 if (!$is_auth) {
     http_response_code(403);
-    $page_content = include_template('error.php', ['error' => 'Страница доступна только для авторизованных пользователей']);
+    $page_content = include_template('error.php', ['error' => 'Страница доступна только для авторизованных пользователей',
+                                                          'categories' => $categories]);
     $page_title = "Ошибка";
 }
 

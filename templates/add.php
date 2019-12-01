@@ -24,7 +24,7 @@
       <select id="category" name="category-id">
           <?php foreach ($categories as $cat): ?>
               <option value="<?= $cat['id'] ?>"
-                      <?php if ($cat['id'] == getPostVal('category-id')): ?>selected<?php endif; ?>><?=$cat['name'];
+                      <?php if ($cat['id'] === intval(getPostVal('category-id'))): ?>selected<?php endif; ?>><?=$cat['name'];
                   ?></option>
           <?php endforeach; ?>
       </select>
